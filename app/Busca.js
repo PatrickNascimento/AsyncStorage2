@@ -13,7 +13,7 @@ import { Actions } from "react-native-router-flux";
 
 var x = '';
 
-export default class List extends Component {
+export default class Busca extends Component {
   constructor() {
     super();
     this.state = {
@@ -21,7 +21,7 @@ export default class List extends Component {
     };
 
     try {
-      AsyncStorage.getItem("database_form").then(value => {
+      AsyncStorage.getItem("database_form,3").then(value => {
         this.setState({
           list: JSON.parse(value)
         });
@@ -39,8 +39,8 @@ export default class List extends Component {
 
   parseData() {
     if (this.state.list) {
-      return this.state.list.map((data, i) => {      	 
-      	   
+      return this.state.list.map((data, i) => {        
+           
         return (          
 
         <TouchableHighlight           
@@ -51,7 +51,7 @@ export default class List extends Component {
             <Text style={styles.textButton}>{data.email}</Text>
             <Text style={styles.textButton}>{data.comentario}</Text>
           </View>
-         </TouchableHighlight>          		
+         </TouchableHighlight>              
         );
       });
     }
@@ -62,7 +62,7 @@ export default class List extends Component {
       <View style={styles.container}>
       
       <ScrollView>
-       	{this.parseData()}        
+        {this.parseData()}        
       </ScrollView>
 
         <TouchableHighlight
