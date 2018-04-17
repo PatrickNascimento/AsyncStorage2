@@ -17,10 +17,14 @@ export default class app extends React.Component {
     super(props);
 
     this.state = {
+      codigo:"",  
       nome: "",
       email: "",
       comentario: ""
     };
+  }
+  changeCodigo(codigo) {
+    this.setState({ codigo });
   }
   changeNome(nome) {
     this.setState({ nome });
@@ -32,10 +36,11 @@ export default class app extends React.Component {
     this.setState({ comentario });
   }
 
-  buttonPressed() {
+  salvar() {
     const arrayData = [];
     if (this.state.comentario && this.state.nome && this.state.email) {
       const data = {
+        codigo: this.state.codigo,
         nome: this.state.nome,
         email: this.state.email,
         comentario: this.state.comentario
@@ -60,12 +65,20 @@ export default class app extends React.Component {
     } else {
       Alert.alert("Aviso", "Você precisa preencher todos os campos");
     }
-  }
+  }  
   render() {
     return (
       <View style={styles.container}>
         <View>
           <Text style={styles.title}>AsyncStorage ReactNative</Text>
+
+           <TextInput
+            style={styles.input}
+            placeholder="Código"
+            value={this.state.codigo}
+            onChangeText={codigo => this.changeCodigo(codigo)}
+          />
+
           <TextInput
             style={styles.input}
             placeholder="Nome"
@@ -87,7 +100,7 @@ export default class app extends React.Component {
           />
           <TouchableHighlight
             style={styles.button}
-            onPress={() => this.buttonPressed()}
+            onPress={() => this.salvar()}
           >
             <Text style={styles.textButton}>Enviar</Text>
           </TouchableHighlight>

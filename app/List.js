@@ -11,7 +11,7 @@ import {
 import { Actions } from "react-native-router-flux";
   
 
-var x = '';
+var exlist = '';
 
 export default class List extends Component {
   constructor() {
@@ -23,7 +23,7 @@ export default class List extends Component {
     try {
       AsyncStorage.getItem("database_form").then(value => {
         this.setState({
-          list: JSON.parse(value)
+          list: JSON.parse(value)          
         });
       });
     } catch (err) {
@@ -33,7 +33,7 @@ export default class List extends Component {
   }
 
   dados(i){
-    x = {i}    
+    exlist = {i}        
     Actions.busca();                
   }
 
@@ -44,12 +44,13 @@ export default class List extends Component {
         return (          
 
         <TouchableHighlight           
-          onPress={() => this.dados(i)}
+          onPress={() => this.dados(data.codigo)}
         >        
           <View style={styles.datalista} key={i}>
-            <Text style={styles.textButton}>{i}{data.nome}</Text>
-            <Text style={styles.textButton}>{data.email}</Text>
-            <Text style={styles.textButton}>{data.comentario}</Text>
+            <Text style={styles.textButton} key={i}>{data.codigo}</Text>
+            <Text style={styles.textButton} key={i}>{data.nome}</Text>
+            <Text style={styles.textButton} key={i}>{data.email}</Text>
+            <Text style={styles.textButton} key={i}>{data.comentario}</Text>
           </View>
          </TouchableHighlight>          		
         );
@@ -105,4 +106,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export {x};
+export {exlist};

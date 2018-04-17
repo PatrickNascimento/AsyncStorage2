@@ -9,9 +9,7 @@ import {
   Alert
 } from "react-native";
 import { Actions } from "react-native-router-flux";
-  
-
-var x = '';
+import {exlist} from "./List";
 
 export default class Busca extends Component {
   constructor() {
@@ -21,49 +19,39 @@ export default class Busca extends Component {
     };
 
     try {
-      AsyncStorage.getItem("database_form,3").then(value => {
+      AsyncStorage.getItem("database_form").then(value => {
         this.setState({
-          list: JSON.parse(value)
+          list: JSON.parse(value)  
         });
+
       });
     } catch (err) {
       console.log(err);
     }
 
-  }
-
-  dados(i){
-    x = {i}    
-    Actions.busca();                
-  }
-
-  parseData() {
-    if (this.state.list) {
-      return this.state.list.map((data, i) => {        
-           
-        return (          
-
-        <TouchableHighlight           
-          onPress={() => this.dados(i)}
-        >        
-          <View style={styles.datalista} key={i}>
-            <Text style={styles.textButton}>{i}{data.nome}</Text>
-            <Text style={styles.textButton}>{data.email}</Text>
-            <Text style={styles.textButton}>{data.comentario}</Text>
-          </View>
-         </TouchableHighlight>              
-        );
-      });
+  }       
+   
+ parseData() {
+  var filtro = exlist.i;
+    if(typeof filtro === 'undefined'){filtro = null};      
+    if(this.state.list) {      
+        return this.state.list.filter((data) => data.codigo === filtro);
+    } else {
+        return [];
     }
-  }
+  
+}
 
   render() {
+    const list = this.parseData();
     return (
-      <View style={styles.container}>
-      
-      <ScrollView>
-        {this.parseData()}        
-      </ScrollView>
+      <View style={styles.container}>      
+     <ScrollView>
+        {list.map(item => (<Text>{item.codigo}</Text>))}
+        {list.map(item => (<Text>{item.nome}</Text>))}
+        {list.map(item => (<Text>{item.email}</Text>))}
+        {list.map(item => (<Text>{item.comentario}</Text>))}
+     </ScrollView>
 
         <TouchableHighlight
           style={styles.button}
@@ -75,6 +63,7 @@ export default class Busca extends Component {
     );
   }
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -105,4 +94,3 @@ const styles = StyleSheet.create({
   }
 });
 
-export {x};
