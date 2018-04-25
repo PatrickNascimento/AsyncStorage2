@@ -12,18 +12,21 @@ import {
 import { Actions } from "react-native-router-flux";
 
 
+
 var exlist = '';
 const db = SQLite.openDatabase('db.db');
 
 export default class List extends Component {
+
   constructor() {
     super();
     this.state = {
-      codigo: "",
-      nome: "",
-      email: "",
-      comentario: ""
+      row: []
     };
+  }
+
+  componentDidMount() {
+    this.parseData();
   }
 
   dados(i){
@@ -36,46 +39,48 @@ export default class List extends Component {
     db.transaction((tx) =>{
       tx.executeSql('SELECT codigo,nome,email,comentario FROM usuarios',[],(tx,results) => {
         var len = results.rows.length;
+        console.log(len);
         if(len>0){
-          var row = results.rows.item(0);
-          this.setState({codigo: JSON.stringify(row.codigo)});
-          this.setState({nome: row.nome});
-          this.setState({email: row.email});
-          this.setState({comentario: row.comentario});
-          console.log(JSON.stringify(row));
+          var row = results.rows._array;
+          console.log(row);
+          this.setState({row});
         }
-        return (
-          <View style={styles.datalista}>
-          <Text style={styles.textButton}>{this.state.codigo}</Text>
-          <Text style={styles.textButton}>{this.state.nome}</Text>
-          <Text style={styles.textButton}>{this.state.email}</Text>
-          <Text style={styles.textButton}>{this.state.comentario}</Text>
-          </View>
-        );
       });
     });
   }
 
+  renderListItems = () => this.state.row.map((item) => (
+    <TouchableHighlight
+      onPress={() => this.dados(item.codigo)}
+      >
+      <View style={styles.datalista}>
+        <Text style={styles.textButton}key={item.codigo}>{item.codigo}</Text>
+        <Text style={styles.textButton}key={item.codigo}>{item.nome}</Text>
+        <Text style={styles.textButton}key={item.codigo}>{item.email}</Text>
+        <Text style={styles.textButton}key={item.codigo}>{item.comentario}</Text>
+      </View>
+    </TouchableHighlight>
+  )
+);
 
-  render() {
-    return (
-      <View style={styles.container}>
+render() {
+  return (
+    <View style={styles.container}>
 
       <ScrollView>
-      {this.parseData()}
+        {this.state.row.length >= 1 ? this.renderListItems() : null }
       </ScrollView>
 
       <TouchableHighlight
-      style={styles.button}
-      onPress={() => Actions.home()}
-      >
-      <Text style={styles.textButton}>Volta para Cadastro</Text>
+        style={styles.button}
+        onPress={() => Actions.home()}
+        >
+        <Text style={styles.textButton}>Volta para Cadastro</Text>
       </TouchableHighlight>
-      </View>
-    );
-  }
+    </View>
+  );
 }
-
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -100,10 +105,9 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     padding: 20,
     marginTop: 5,
-    height: 120,
+    height: 150,
     borderRadius: 10,
     backgroundColor: "#888888",
-
   }
 });
 

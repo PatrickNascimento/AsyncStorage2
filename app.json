@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "asyncstorage2",
+    "name": "Sqlite2Form",
     "description": "Crud asyncstorage React Native",
     "slug": "asyncstorage2",
     "privacy": "public",

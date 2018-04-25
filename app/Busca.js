@@ -1,3 +1,4 @@
+import Expo, { SQLite } from 'expo';
 import React, { Component } from "react";
 import {
   TouchableHighlight,
@@ -11,57 +12,68 @@ import {
 import { Actions } from "react-native-router-flux";
 import {exlist} from "./List";
 
+const db = SQLite.openDatabase('db.db');
+
 export default class Busca extends Component {
+
   constructor() {
     super();
     this.state = {
-      list: ""
+      row: []
     };
-
-    try {
-      AsyncStorage.getItem("database_form").then(value => {
-        this.setState({
-          list: JSON.parse(value)  
-        });
-
-      });
-    } catch (err) {
-      console.log(err);
-    }
-
-  }       
-   
- parseData() {
-  var filtro = exlist.i;
-    if(typeof filtro === 'undefined'){filtro = null};      
-    if(this.state.list) {      
-        return this.state.list.filter((data) => data.codigo === filtro);
-    } else {
-        return [];
-    }
-  
-}
-
-  render() {
-    const list = this.parseData();
-    return (
-      <View style={styles.container}>      
-     <ScrollView>
-        {list.map(item => (<Text>{item.codigo}</Text>))}
-        {list.map(item => (<Text>{item.nome}</Text>))}
-        {list.map(item => (<Text>{item.email}</Text>))}
-        {list.map(item => (<Text>{item.comentario}</Text>))}
-     </ScrollView>
-
-        <TouchableHighlight
-          style={styles.button}
-          onPress={() => Actions.home()}
-        >        
-          <Text style={styles.textButton}>Volta para Cadastro</Text>
-        </TouchableHighlight>
-      </View>
-    );
   }
+
+  componentDidMount() {
+    this.parseData();
+  }
+
+  parseData() {
+    var row = [];
+    //alert(exlist.i);
+    var filtro = exlist.i;
+    db.transaction((tx) =>{
+      tx.executeSql('SELECT codigo,nome,email,comentario FROM usuarios where codigo ='+filtro+'',[],(tx,results) => {
+        var len = results.rows.length;
+        console.log(len);
+        if(len>0){
+          var row = results.rows._array;
+          console.log(row);
+          this.setState({row});
+        }
+      });
+    });
+  }
+
+  renderListItems = () => this.state.row.map((item) => (
+    <TouchableHighlight
+      onPress={() => alert('ok')}
+      >
+      <View style={styles.datalista}>
+        <Text style={styles.textButton}key={item.codigo}>{item.codigo}</Text>
+        <Text style={styles.textButton}key={item.codigo}>{item.nome}</Text>
+        <Text style={styles.textButton}key={item.codigo}>{item.email}</Text>
+        <Text style={styles.textButton}key={item.codigo}>{item.comentario}</Text>
+      </View>
+    </TouchableHighlight>
+  )
+);
+
+render() {
+  return (
+    <View style={styles.container}>
+      <ScrollView>
+        {this.state.row.length >= 1 ? this.renderListItems() : null }
+      </ScrollView>
+
+      <TouchableHighlight
+        style={styles.button}
+        onPress={() => Actions.home()}
+        >
+        <Text style={styles.textButton}>Volta para Cadastro</Text>
+      </TouchableHighlight>
+    </View>
+  );
+}
 }
 
 const styles = StyleSheet.create({
@@ -90,7 +102,6 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 10,
     backgroundColor: "#888888",
-    
+
   }
 });
-
